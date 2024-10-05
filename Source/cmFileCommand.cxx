@@ -1933,6 +1933,7 @@ bool HandleDownloadCommand(std::vector<std::string> const& args,
 
   long timeout = 0;
   long inactivity_timeout = 0;
+  std::string proxy;
   std::string logVar;
   std::string statusVar;
   cm::optional<std::string> tlsVersionOpt;
@@ -1952,7 +1953,14 @@ bool HandleDownloadCommand(std::vector<std::string> const& args,
   std::vector<std::pair<std::string, cm::optional<std::string>>> curl_ranges;
 
   while (i != args.end()) {
-    if (*i == "TIMEOUT") {
+    if(*i == "PROXY"){
+      ++i;
+      if (i == args.end()) {
+        status.SetError("DOWNLOAD missing VAR for PROXY.");
+        return false;
+      }
+      proxy = *i;
+    }else if (*i == "TIMEOUT") {
       ++i;
       if (i != args.end()) {
         timeout = atol(i->c_str());
@@ -2276,6 +2284,11 @@ bool HandleDownloadCommand(std::vector<std::string> const& args,
 
   res = ::curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
   check_curl_result(res, "DOWNLOAD cannot set follow-redirect option: ");
+
+  if(!proxy.empty()){
+    res = ::curl_easy_setopt(curl, CURLOPT_PROXY, proxy.c_str());
+    check_curl_result(res, "DOWNLOAD cannot set proxy: ");
+  }
 
   if (!logVar.empty()) {
     res = ::curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);

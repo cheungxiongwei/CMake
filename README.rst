@@ -109,6 +109,29 @@ There are two ways for building CMake under Windows:
 .. _`CMake Download Page`: https://cmake.org/download
 .. _`MSYS2`: https://www.msys2.org/
 
+Use VSCode build
+1. Open the directory with vscode
+
+2. Select the compiler
+
+3. Configure cmake options
+
+If you need to compile cmake-gui , turn on the BUILD_QtDialog option and specify the qt dependency directory.
+
+.vscode/settings.json
+```
+    "cmake.configureArgs": [
+        "-DCMAKE_CXX_FLAGS=/O2 /GL /fp:fast",
+        "-DCMAKE_EXE_LINKER_FLAGS=-flto",
+        "-DBUILD_QtDialog=ON",
+        "-DCMAKE_PREFIX_PATH=C:/Qt/6.8.0/msvc2022_64"
+    ],
+```
+
+In cmake tools select 
+
+Configure/MinSizeRel
+
 Reporting Bugs
 ==============
 
